@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS Hands-on
+Resources:
+  tradingLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: samAppFunction
+      CodeUri: ./src/lambda
+      Handler: index.lambda_handler
+      Runtime: python3.9
+      Architectures: [ x86_64 ]
+      Policies:
+        - AmazonDynamoDBFullAccess
+      Timeout: 20
+      MemorySize: 256
+      # Layers: 
+      #   - !Ref requestsLayer
+      #   - !Ref pytzLayer
+# # ----------------------------- #
+# # requests-Layer                  #
+# # ----------------------------- #
+#   requestsLayer:
+#       Type: AWS::Serverless::LayerVersion
+#       Properties:
+#         CompatibleRuntimes:
+#           - python3.9
+#         ContentUri: ./layer/requests
+#         LayerName: "requestsLayer"
+
+# # ----------------------------- #
+# # pytz-Layer                  #
+# # ----------------------------- #
+#   pytzLayer:
+#       Type: AWS::Serverless::LayerVersion
+#       Properties:
+#         CompatibleRuntimes:
+#           - python3.9
+#         ContentUri: ./layer/pytz
+#         LayerName: "pytzLayer"
