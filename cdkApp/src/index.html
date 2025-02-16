@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>消費税計算アプリ</title>
+  <style>
+    /* リセット・基本設定 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #e0f7e9, #ffffff);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    /* コンテナを中央に縦一列に配置 */
+    .container {
+      background-color: #f4fff4;
+      border: 1px solid #a2d5a2;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px; /* 各要素間の隙間 */
+    }
+    
+    h1 {
+      color: #2a8c2a;
+      font-size: 2em;
+    }
+    
+    p {
+      font-size: 1.1em;
+      text-align: center;
+    }
+    
+    /* 入力フィールド */
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border: 2px solid #2a8c2a;
+      border-radius: 5px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    
+    input[type="number"]:focus {
+      border-color: #1e6f1e;
+    }
+    
+    /* ボタン */
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1em;
+      color: #fff;
+      background-color: #2a8c2a;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    button:hover {
+      background-color: #277227;
+    }
+    
+    /* 結果表示 */
+    #result {
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #2a8c2a;
+      text-align: center;
+    }
+  </style>
+  <script>
+    function calculateTax() {
+      const price = document.getElementById('price').value;
+      const apiUrl = 'https://w1k2geqqj5.execute-api.ap-northeast-1.amazonaws.com/v1/';
+      const data = { price: price };
+
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        if(result.error) {
+          document.getElementById('result').textContent = "エラー: " + result.error;
+        } else {
+          document.getElementById('result').textContent = "消費税 (10%): " + result.tax;
+        }
+      })
+      .catch(error => {
+        document.getElementById('result').textContent = "エラー: " + error;
+      });
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>消費税計算アプリ</h1>
+    <p>金額を入力してください（消費税10%を計算します）</p>
+    <input type="number" id="price" placeholder="金額">
+    <button onclick="calculateTax()">計算する</button>
+    <p id="result"></p>
+  </div>
+</body>
+</html>

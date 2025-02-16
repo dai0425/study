@@ -6,35 +6,37 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: samAppFunction
-      CodeUri: ./src/lambda
+      CodeUri: ./src/lambda/agent
       Handler: index.lambda_handler
       Runtime: python3.9
       Architectures: [ x86_64 ]
       Policies:
-        - AmazonDynamoDBFullAccess
-      Timeout: 20
+        - AmazonBedrockFullAccess
+        - AmazonS3FullAccess
+      Timeout: 30
       MemorySize: 256
-      # Layers: 
-      #   - !Ref requestsLayer
-      #   - !Ref pytzLayer
-# # ----------------------------- #
-# # requests-Layer                  #
-# # ----------------------------- #
-#   requestsLayer:
-#       Type: AWS::Serverless::LayerVersion
-#       Properties:
-#         CompatibleRuntimes:
-#           - python3.9
-#         ContentUri: ./layer/requests
-#         LayerName: "requestsLayer"
+      Layers: 
+        - !Ref pytzLayer
+        - !Ref openpyxlLayer
 
-# # ----------------------------- #
-# # pytz-Layer                  #
-# # ----------------------------- #
-#   pytzLayer:
-#       Type: AWS::Serverless::LayerVersion
-#       Properties:
-#         CompatibleRuntimes:
-#           - python3.9
-#         ContentUri: ./layer/pytz
-#         LayerName: "pytzLayer"
+# ----------------------------- #
+# pytz-Layer                  #
+# ----------------------------- #
+  pytzLayer:
+      Type: AWS::Serverless::LayerVersion
+      Properties:
+        CompatibleRuntimes:
+          - python3.9
+        ContentUri: ./layer/pandas
+        LayerName: "pytzLayer"
+
+# ----------------------------- #
+# open-Layer                  #
+# ----------------------------- #
+  openpyxlLayer:
+      Type: AWS::Serverless::LayerVersion
+      Properties:
+        CompatibleRuntimes:
+          - python3.9
+        ContentUri: ./layer/openpyxl
+        LayerName: "openLayer"

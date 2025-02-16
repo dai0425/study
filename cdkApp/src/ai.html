@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>データ送信アプリ</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #e0f7e9, #ffffff);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: #f4fff4;
+      border: 1px solid #a2d5a2;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    h1 {
+      color: #2a8c2a;
+      font-size: 2em;
+    }
+
+    p {
+      font-size: 1.1em;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border: 2px solid #2a8c2a;
+      border-radius: 5px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #1e6f1e;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1em;
+      color: #fff;
+      background-color: #2a8c2a;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #277227;
+    }
+
+    #result {
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #2a8c2a;
+      text-align: center;
+      white-space: pre-wrap; /* 改行をそのまま表示 */
+    }
+  </style>
+  <script>
+    function sendData() {
+      const userInput = document.getElementById('inputText').value.trim();
+      if (!userInput) {
+        document.getElementById('result').textContent = "入力が空です";
+        return;
+      }
+
+      const apiUrl = 'https://w1k2geqqj5.execute-api.ap-northeast-1.amazonaws.com/v1/';
+      const data = { text: userInput }; // 元のAPI仕様に合わせて "text" に修正
+
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        console.log("API Response:", result); // デバッグ用
+        if (typeof result === 'string') {
+          document.getElementById('result').textContent = result.body; // 文字列ならそのまま表示
+        } else if (result.message) {
+          document.getElementById('result').textContent = result.message; // `message` フィールドがあるなら表示
+        } else {
+          document.getElementById('result').textContent = JSON.stringify(result, null, 2); // JSONを整形して表示
+        }
+      })
+      .catch(error => {
+        console.error("Fetch Error:", error); // デバッグ用
+        document.getElementById('result').textContent = "エラー: " + error;
+      });
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>データ送信アプリ</h1>
+    <p>何でも入力してください（サーバーからのレスポンスをそのまま表示）</p>
+    <input type="text" id="inputText" placeholder="入力してください">
+    <button onclick="sendData()">送信</button>
+    <p id="result"></p>
+  </div>
+</body>
+</html>

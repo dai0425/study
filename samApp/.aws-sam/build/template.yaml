@@ -12,8 +12,26 @@ Resources:
       Architectures:
       - x86_64
       Policies:
-      - AmazonDynamoDBFullAccess
-      Timeout: 20
+      - AmazonBedrockFullAccess
+      - AmazonS3FullAccess
+      Timeout: 30
       MemorySize: 256
+      Layers:
+      - Ref: pytzLayer
+      - Ref: openpyxlLayer
     Metadata:
       SamResourceId: tradingLambda
+  pytzLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+      - python3.9
+      ContentUri: ..\..\layer\pandas
+      LayerName: pytzLayer
+  openpyxlLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+      - python3.9
+      ContentUri: ..\..\layer\openpyxl
+      LayerName: openLayer
