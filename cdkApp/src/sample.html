@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>RAG用アプリ</title>
+        <link rel="icon" href="img/robot.png" type="image/x-icon">
+        <link rel="shortcut icon" href="img/robot.png" type="image/x-icon">
+    </head>
+      
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "遊ゴシック",'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #e0f4f7, #ffffff);
+      /* bodyの中の文字 */
+      color: #333; 
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: #f4fff4;
+      border: 1px solid #759ec0;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    h1 {
+      color: rgb(12, 12, 197);
+      text-shadow:
+        -1px -1px 0 #fff, /* 上、左の影 */
+        1px -1px 0 #fff, /* 上、右の影 */
+        -1px  1px 0 #fff, /* 下、左の影 */
+        1px  1px 0 #fff, /* 下、右の影 */
+        -1.5px -1.5px 0 #000, /* 上、左の影 (二重の縁取り) */
+        1.5px -1.5px 0 #000, /* 上、右の影 (二重の縁取り) */
+        -1.5px  1.5px 0 #000, /* 下、左の影 (二重の縁取り) */
+        1.5px  1.5px 0 #000; 
+      font-size: 2em;
+    }
+
+    .icon {
+      height: 1.5em; /* h1の文字の高さに合わせる */
+      vertical-align: text-bottom; /* テキストと垂直方向に中央揃え */
+    }
+
+    p {
+      font-size: 1.1em;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border: 2px solid #2a448c;
+      border-radius: 5px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #1e6f1e;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1em;
+      color: #fff;
+      background-color: #312a8c;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #273872;
+    }
+
+    #result {
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #2a418c;
+      text-align: left;
+      white-space: pre-wrap; /* 改行をそのまま表示 */
+    }
+
+    .result-box {
+      background-color: #e0f7e9; /* 背景色 */
+      border: 2px solid #2a448c; /* 枠線の色と太さ */
+      border-radius: 8px; /* 角を丸くする */
+      padding: 15px; /* 内側の余白 */
+      margin-top: 10px; /* 上の余白 */
+      min-height: 3em; /* 最小高さを1行分に設定 */
+      max-height: 20em; /* 最大高さを設定（必要に応じて調整） */
+      width: 100%; /* 横幅を最大に設定 */
+      box-sizing: border-box; /* パディングとボーダーを含む */
+      overflow-y: auto; /* 縦方向のスクロールを追加 */
+    }
+  
+    #result-container {
+      margin-top: 20px;
+      text-align: center;
+      width: 100%; /* 横幅を最大に設定 */
+    }
+
+    #result-container h2 {
+      font-size: 1.5em;
+      color: #2a418c;
+      margin-bottom: 10px; /* 下の余白 */
+    }
+
+    #loading {
+      font-size: 1.2em;
+      color: #2a418c;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+  <script>
+    const ragType = "ポケモン"
+    function invokeApi() {
+      const userInput = document.getElementById('inputText').value.trim();
+      if (!userInput) {
+        document.getElementById('result').textContent = "入力が空です";
+        return;
+      }
+
+      const apiUrl = 'https://w1k2geqqj5.execute-api.ap-northeast-1.amazonaws.com/v1/';
+      const data = { text: userInput }; // 元のAPI仕様に合わせて "text" に修正
+
+      // ローディングメッセージを表示
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
+
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        console.log("API Response:", result); // デバッグ用
+        console.log(result.statusCode)
+        
+        if(result==null){
+
+        }
+        let body = result.body;
+        try {
+          body = JSON.parse(body); // JSON文字列をオブジェクトに変換
+        } catch (e) {
+          // エラー時はそのまま進む
+        }
+        body = body.replace(/\n/g, '<br>'); // 改行を<br>に置き換える
+
+          // 最初の<br>を削除
+        if (body.startsWith('<br>')) {
+            body = body.slice(4);
+        }
+        console.log(body)
+
+        // ローディングメッセージを隠し、結果を表示
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+
+        if (body!==undefined){
+          document.getElementById("result").innerHTML = body; // innerHTMLを使用してHTMLとして表示
+          document.getElementById("result").classList.add("result-box")
+        } else if(body==null) {
+            document.getElementById('result').textContent = "エラー: 回答が生成できませんでした" ;
+
+        }
+      })
+      .catch(error => {
+        console.error("Fetch Error:", error); // デバッグ用
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('result').textContent = "エラー: " + error;
+      });
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>
+      <img src="img/robot.png" alt="アイコン" class="icon">
+      RAG用アプリ
+      <img src="img/robot.png" alt="アイコン" class="icon">
+    </h1>
+    
+    <p><span id="ragType">?</span>関連の質問をしてください
+      <script>
+        document.getElementById("ragType").textContent=ragType
+      </script>
+    </p>
+    <input type="text" id="inputText" placeholder="入力してください">
+    <button onclick="invokeApi()">送信</button>
+    <div id="loading" style="display: none;">生成中...</div>
+    <div id="result-container">
+      <h2>回答</h2>
+      <p id="result" class="result-box"></p>
+    </div>
+  </div>
+</body>
+</html>

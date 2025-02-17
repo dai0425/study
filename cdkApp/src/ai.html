@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>データ送信アプリ</title>
+  <title>RAG用アプリ</title>
   <style>
     * {
       box-sizing: border-box;
@@ -11,9 +11,10 @@
     }
 
     body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-      background: linear-gradient(135deg, #e0f7e9, #ffffff);
-      color: #333;
+      font-family: "遊ゴシック",'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #e0f4f7, #ffffff);
+      /* bodyの中の文字 */
+      color: #333; 
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -23,7 +24,7 @@
 
     .container {
       background-color: #f4fff4;
-      border: 1px solid #a2d5a2;
+      border: 1px solid #759ec0;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       padding: 30px;
@@ -36,7 +37,16 @@
     }
 
     h1 {
-      color: #2a8c2a;
+      color: rgb(12, 12, 197);
+      text-shadow:
+        -1px -1px 0 #fff, /* 上、左の影 */
+        1px -1px 0 #fff, /* 上、右の影 */
+        -1px  1px 0 #fff, /* 下、左の影 */
+        1px  1px 0 #fff, /* 下、右の影 */
+        -1.5px -1.5px 0 #000, /* 上、左の影 (二重の縁取り) */
+        1.5px -1.5px 0 #000, /* 上、右の影 (二重の縁取り) */
+        -1.5px  1.5px 0 #000, /* 下、左の影 (二重の縁取り) */
+        1.5px  1.5px 0 #000; 
       font-size: 2em;
     }
 
@@ -49,7 +59,7 @@
       width: 100%;
       padding: 10px;
       font-size: 1em;
-      border: 2px solid #2a8c2a;
+      border: 2px solid #2a448c;
       border-radius: 5px;
       outline: none;
       transition: border-color 0.3s;
@@ -64,7 +74,7 @@
       padding: 12px;
       font-size: 1.1em;
       color: #fff;
-      background-color: #2a8c2a;
+      background-color: #312a8c;
       border: none;
       border-radius: 5px;
       cursor: pointer;
@@ -72,59 +82,30 @@
     }
 
     button:hover {
-      background-color: #277227;
+      background-color: #273872;
     }
 
     #result {
       font-weight: bold;
       font-size: 1.2em;
-      color: #2a8c2a;
+      color: #2a418c;
       text-align: center;
       white-space: pre-wrap; /* 改行をそのまま表示 */
     }
   </style>
-  <script>
-    function sendData() {
-      const userInput = document.getElementById('inputText').value.trim();
-      if (!userInput) {
-        document.getElementById('result').textContent = "入力が空です";
-        return;
-      }
-
-      const apiUrl = 'https://w1k2geqqj5.execute-api.ap-northeast-1.amazonaws.com/v1/';
-      const data = { text: userInput }; // 元のAPI仕様に合わせて "text" に修正
-
-      fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      })
-      .then(response => response.json())
-      .then(result => {
-        console.log("API Response:", result); // デバッグ用
-        if (typeof result === 'string') {
-          document.getElementById('result').textContent = result.body; // 文字列ならそのまま表示
-        } else if (result.message) {
-          document.getElementById('result').textContent = result.message; // `message` フィールドがあるなら表示
-        } else {
-          document.getElementById('result').textContent = JSON.stringify(result, null, 2); // JSONを整形して表示
-        }
-      })
-      .catch(error => {
-        console.error("Fetch Error:", error); // デバッグ用
-        document.getElementById('result').textContent = "エラー: " + error;
-      });
-    }
-  </script>
+  <script src="script.js"></script>
 </head>
 <body>
   <div class="container">
-    <h1>データ送信アプリ</h1>
-    <p>何でも入力してください（サーバーからのレスポンスをそのまま表示）</p>
+    <h1>RAG用アプリ</h1>
+    
+    <p><span id="ragType">?</span>関連の質問をしてください
+      <script>
+        document.getElementById("ragType").textContent=ragType
+      </script>
+    </p>
     <input type="text" id="inputText" placeholder="入力してください">
-    <button onclick="sendData()">送信</button>
+    <button onclick="invokeApi()">送信</button>
     <p id="result"></p>
   </div>
 </body>

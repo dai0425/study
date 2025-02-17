@@ -1,0 +1,82 @@
+/* リセット・基本設定 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+body {
+font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+background: linear-gradient(135deg, #e0f7e9, #ffffff);
+color: #333;
+min-height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 20px;
+}
+
+/* コンテナを中央に縦一列に配置 */
+.container {
+background-color: #f4fff4;
+border: 1px solid #a2d5a2;
+border-radius: 10px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+padding: 30px;
+max-width: 500px;
+width: 100%;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 20px; /* 各要素間の隙間 */
+}
+
+h1 {
+color: #2a8c2a;
+font-size: 2em;
+}
+
+p {
+font-size: 1.1em;
+text-align: center;
+}
+
+/* 入力フィールド */
+input[type="number"] {
+width: 100%;
+padding: 10px;
+font-size: 1em;
+border: 2px solid #2a8c2a;
+border-radius: 5px;
+outline: none;
+transition: border-color 0.3s;
+}
+
+input[type="number"]:focus {
+border-color: #1e6f1e;
+}
+
+/* ボタン */
+button {
+width: 100%;
+padding: 12px;
+font-size: 1.1em;
+color: #fff;
+background-color: #2a8c2a;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+transition: background-color 0.3s;
+}
+
+button:hover {
+background-color: #277227;
+}
+
+/* 結果表示 */
+#result {
+font-weight: bold;
+font-size: 1.2em;
+color: #2a8c2a;
+text-align: center;
+}
